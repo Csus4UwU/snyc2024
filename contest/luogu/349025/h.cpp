@@ -13,13 +13,13 @@ int P;
 
 constexpr int N = 18;
 using Mat = std::array<std::array<u64, N>, N>;
-constexpr Mat operator*(const Mat &a, const Mat &b) {
+Mat operator*(const Mat &a, const Mat &b) {
     Mat c {};
     for (int i = 0; i < N; i++) {
         for (int k = 0; k < N; k++) {
             for (int j = 0; j < N; j++) {
                 c[i][j] += a[i][k] * b[k][j];
-                if ((k & 15) == 15) {
+                if ((k & 15) == 15 or k == N - 1) {
                     c[i][j] %= P;
                 }
             }
@@ -27,7 +27,7 @@ constexpr Mat operator*(const Mat &a, const Mat &b) {
     }
     return c;
 }
-constexpr Mat power(Mat a, u64 b) {
+Mat power(Mat a, u64 b) {
     Mat res {};
     for (int i = 0; i < N; i++) {
         res[i][i] = 1;
@@ -40,13 +40,18 @@ constexpr Mat power(Mat a, u64 b) {
     return res;
 }
 
-Mat f {};
+Mat M {};
 
 void solve() {
     int a, b;
     std::cin >> a >> b >> P;
 
-    
+    Mat ans = M;
+    for (int i = 0; i < b; i++) {
+        ans = power(ans, a);
+    }
+
+    std::cout << ans[0][9] % P << "\n";
 }
 
 int main() {
@@ -54,18 +59,18 @@ int main() {
     std::cin.tie(nullptr);
 
     for (int i = 0; i < 9; i++) {
-        f[0][i] = 10;
-        f[9][i] = 0;
+        M[0][i] = 10;
+        M[9][i] = 0;
     }
     for (int i = 9; i < 18; i++) {
-        f[0][i] = i - 8;
-        f[9][i] = 1;
+        M[0][i] = i - 8;
+        M[9][i] = 1;
     }
     for (int i = 1; i < 9; i++) {
-        f[i][i - 1] = 1;
+        M[i][i - 1] = 1;
     }
     for (int i = 10; i < 18; i++) {
-
+        M[i][i - 1] = 1;
     }
 
     int t;
